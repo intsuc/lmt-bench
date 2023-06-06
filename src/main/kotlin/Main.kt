@@ -16,16 +16,13 @@ fun main(args: Array<String>) {
   Path("mch-config.json").outputStream().buffered().use {
     Json.encodeToStream(
       MchConfig(
-        5,
-        5,
-        10,
-        5,
-        "ns",
-        null,
-        null,
-        null,
-        null,
-        listOf("bench")
+        warmupIterations = 5,
+        measurementIterations = 5,
+        time = 10,
+        forks = 5,
+        timeUnit = "ns",
+        jvmArgs = emptyList(),
+        executeBenchmarks = listOf("bench")
       ),
       it,
     )
@@ -53,16 +50,13 @@ fun main(args: Array<String>) {
 
 @Serializable
 data class MchConfig(
-  @SerialName("warmup_iterations") val warmupIterations: Int?,
-  @SerialName("measurement_iterations") val measurementIterations: Int?,
-  val time: Int?,
-  val forks: Int?,
-  @SerialName("time_unit") val timeUnit: String?,
-  val mc: String?,
-  @SerialName("jvm_args") val jvmArgs: List<String>?,
-  @SerialName("mc_args") val mcArgs: List<String>?,
-  @SerialName("parsing_benchmarks") val parsingBenchmarks: List<String>?,
-  @SerialName("execute_benchmarks") val executeBenchmarks: List<String>?,
+  @SerialName("warmup_iterations") val warmupIterations: Int,
+  @SerialName("measurement_iterations") val measurementIterations: Int,
+  val time: Int,
+  val forks: Int,
+  @SerialName("time_unit") val timeUnit: String,
+  @SerialName("jvm_args") val jvmArgs: List<String>,
+  @SerialName("execute_benchmarks") val executeBenchmarks: List<String>,
 )
 
 @Serializable
