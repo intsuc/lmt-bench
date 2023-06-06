@@ -1,0 +1,42 @@
+name: Bench
+
+on:
+  workflow_dispatch:
+
+jobs:
+  bench:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        benchmark:
+          - "seed"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: "temurin"
+          java-version: "19"
+      - name: Validate gradle wrapper
+        uses: gradle/wrapper-validation-action@v1
+      - name: Generate datapack
+        uses: gradle/gradle-build-action@v2
+        with:
+          arguments: |
+            run
+            --args="${{ matrix.benchmark }}"
+      - name: Setup Minecraft
+        uses: mcenv/setup-minecraft@v3
+        with:
+          version: "snapshot"
+      - name: Benchmark
+        run: |
+          curl -L -o mch.jar https://github.com/mcenv/mch/releases/latest/download/mch.jar
+          echo "eula=true" > eula.txt
+          java -jar mch.jar --mc=$MINECRAFT
+      - name: Upload benchmark results
+        uses: actions/upload-artifact@v3
+        with:
+          name: ${{ matrix.benchmark }}
+          path: mch-results.json
