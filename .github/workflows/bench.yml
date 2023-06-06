@@ -33,7 +33,6 @@ jobs:
       - name: Benchmark
         run: |
           curl -L -o mch.jar https://github.com/mcenv/mch/releases/latest/download/mch.jar
-          echo "eula=true" > eula.txt
           java -jar mch.jar --mc=$MINECRAFT
       - name: Upload benchmark results
         uses: actions/upload-artifact@v3
