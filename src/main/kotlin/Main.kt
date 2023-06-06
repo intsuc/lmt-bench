@@ -6,7 +6,7 @@ import kotlinx.serialization.json.encodeToStream
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
 import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
+import kotlin.io.path.createParentDirectories
 import kotlin.io.path.outputStream
 
 @OptIn(ExperimentalSerializationApi::class)
@@ -33,7 +33,7 @@ fun main(args: Array<String>) {
 
   ZipOutputStream(
     Path("world", "datapacks", "lmt.zip")
-      .createDirectories()
+      .createParentDirectories()
       .outputStream()
       .buffered()
   ).use {
