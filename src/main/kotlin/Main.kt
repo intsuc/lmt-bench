@@ -8,10 +8,12 @@ import java.util.zip.ZipOutputStream
 import kotlin.io.path.Path
 import kotlin.io.path.createParentDirectories
 import kotlin.io.path.outputStream
+import kotlin.math.log
 
 @OptIn(ExperimentalSerializationApi::class)
 fun main(args: Array<String>) {
   args.forEach { println(it) }
+  val arity = args[0].toInt()
 
   Path("mch-config.json").outputStream().buffered().use {
     Json.encodeToStream(
@@ -22,7 +24,7 @@ fun main(args: Array<String>) {
         forks = 5,
         timeUnit = "ns",
         jvmArgs = emptyList(),
-        executeBenchmarks = listOf("bench")
+        executeBenchmarks = listOf("access")
       ),
       it,
     )
@@ -34,17 +36,36 @@ fun main(args: Array<String>) {
       .outputStream()
       .buffered()
   ).use {
+    fun write(name: String, content: String) {
+      println("\u001B[32m$name\u001B[0m")
+      println(content)
+      it.putNextEntry(ZipEntry(name))
+      it.write(content.encodeToByteArray())
+    }
+
     it.putNextEntry(ZipEntry("pack.mcmeta"))
     Json.encodeToStream(PackMetadata(PackMetadata.PackMetadataSection("", 15)), it)
 
     it.putNextEntry(ZipEntry("data/mch/tags/functions/setup.json"))
     Json.encodeToStream(TagFile(listOf("setup")), it)
 
-    it.putNextEntry(ZipEntry("data/minecraft/functions/setup.mcfunction"))
-    it.write("""say setup""".encodeToByteArray())
+    val max = 65536
+    val height = log(arity.toDouble(), max.toDouble()).toInt()
+    val storage = "a"
+    val lmt = "a"
 
-    it.putNextEntry(ZipEntry("data/minecraft/functions/bench.mcfunction"))
-    it.write("""seed""".encodeToByteArray())
+    write(
+      "data/minecraft/functions/setup.mcfunction",
+      """data modify storage $storage $lmt set value ${List(arity) { "[]" }.joinToString(",", "[", "]")}
+        |${List(height - 1) { "data modify storage $storage $lmt[] append from storage $storage $lmt[]" }.joinToString("\n")}
+      """.trimMargin(),
+    )
+
+    write(
+      "data/minecraft/functions/access.mcfunction",
+      """data get storage $storage $lmt${"[-2]".repeat(height)}
+      """.trimMargin(),
+    )
   }
 }
 

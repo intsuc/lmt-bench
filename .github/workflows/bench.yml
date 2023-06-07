@@ -9,7 +9,19 @@ jobs:
     strategy:
       matrix:
         benchmark:
-          - "seed"
+          - "2"
+          - "3"
+          - "4"
+          - "5"
+          - "6"
+          - "7"
+          - "8"
+          - "9"
+          - "10"
+          - "16"
+          - "32"
+          - "40"
+          - "256"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -39,3 +51,28 @@ jobs:
         with:
           name: ${{ matrix.benchmark }}
           path: mch-results.json
+          retention-days: 1
+  merge:
+    needs: bench
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v3
+        with:
+          path: versions
+      - uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require("fs");
+            const results = {};
+            const globber = await glob.create("versions/*/mch-result.json");
+            const versions = await globber.glob();
+            for (const version of versions) {
+              const id = version.slice(0, -"/mch-result.json".length).split("/").pop();
+              results[id] = JSON.parse(fs.readFileSync(version));
+            }
+            fs.writeFileSync("results.json", JSON.stringify(results));
+            return;
+      - uses: actions/upload-artifact@v3
+        with:
+          name: results
+          path: results.json
