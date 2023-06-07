@@ -50,7 +50,7 @@ fun main(args: Array<String>) {
     Json.encodeToStream(TagFile(listOf("setup")), it)
 
     val max = 65536
-    val height = log(arity.toDouble(), max.toDouble()).toInt()
+    val height = log(max.toDouble(), arity.toDouble()).toInt()
     val storage = "a"
     val lmt = "a"
 
