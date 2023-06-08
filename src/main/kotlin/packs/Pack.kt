@@ -5,7 +5,6 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
 import nbt.Tag
-import org.openjdk.jol.info.GraphLayout
 import java.io.DataOutputStream
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -16,7 +15,7 @@ import kotlin.io.path.outputStream
 sealed class Pack(
   val name: String,
 ) {
-  abstract fun metadata(totalSize: Long)
+  abstract fun metadata()
 
   abstract fun storage(): Tag
 
@@ -26,10 +25,8 @@ sealed class Pack(
   fun generate() {
     DataOutputStream((data / "command_storage_$name.dat").outputStream().buffered()).use { output ->
       val storage = storage()
-      val layout = GraphLayout.parseInstance(storage)
       println(name)
-      metadata(layout.totalSize())
-      println(layout.toFootprint())
+      metadata()
       // storage.write(output)
     }
 

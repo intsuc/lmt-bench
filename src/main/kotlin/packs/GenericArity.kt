@@ -12,15 +12,13 @@ class GenericArity(
   round: (Double) -> Int = { it.roundToInt() },
 ) : Pack("generic_arity_$arity") {
   private val height: Int = round(log(MAX_SIZE.toDouble(), arity.toDouble()))
-  private val capacity: Int = getMaxCapacity(arity)
-  val scale: Double = MAX_SIZE.toDouble() / arity.toDouble().pow(height.toDouble())
+  private val capacity: Int = getMaxCapacity(arity, arity * 2 - 1)
+  private val scale: Double = MAX_SIZE.toDouble() / arity.toDouble().pow(height.toDouble())
 
-  override fun metadata(totalSize: Long) {
-    println("   height        $height")
-    println("   capacity      $capacity")
-    println("   scale         $scale")
-    println("   total size    $totalSize")
-    println("   scaled size   ${totalSize.toDouble() * scale}")
+  override fun metadata() {
+    println("   height     $height")
+    println("   capacity   $capacity")
+    println("   scale      $scale")
   }
 
   override fun storage(): Tag {
@@ -29,12 +27,8 @@ class GenericArity(
 
   private fun create(depth: Int): Tag {
     return when (depth) {
-      1    -> ListTag(ArrayList(capacity), 9)
-      else -> ListTag(ArrayList<Tag>(capacity).also { branch ->
-        repeat(arity) {
-          branch += create(depth - 1)
-        }
-      }, 9)
+      0    -> ListTag(emptyList(), 0)
+      else -> ListTag(List(arity) { create(depth - 1) }, 9)
     }
   }
 

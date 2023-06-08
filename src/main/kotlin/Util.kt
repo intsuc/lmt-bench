@@ -1,5 +1,9 @@
 import kotlin.math.max
 
-fun getMaxCapacity(size: Int): Int {
-  return size + max(1, size shr 1)
+fun getMaxCapacity(min: Int, max: Int): Int {
+  var capacity = min
+  while (capacity < max) {
+    capacity += max(1, capacity shr 1)
+  }
+  return capacity
 }
