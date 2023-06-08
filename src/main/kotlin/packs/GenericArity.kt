@@ -1,6 +1,7 @@
 package packs
 
 import getMaxCapacity
+import nbt.ByteTag
 import nbt.ListTag
 import nbt.Tag
 import kotlin.math.log
@@ -27,7 +28,7 @@ class GenericArity(
 
   private fun create(depth: Int): Tag {
     return when (depth) {
-      0    -> ListTag(emptyList(), 0)
+      0    -> ListTag(listOf(ByteTag.valueOf(0)), 0)
       else -> ListTag(List(arity) { create(depth - 1) }, 9)
     }
   }
