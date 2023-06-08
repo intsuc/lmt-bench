@@ -5,8 +5,10 @@ import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
 import nbt.CompoundTag
-import nbt.IntTag
+import nbt.ListTag
+import nbt.StringTag
 import nbt.Tag
+import writeData
 import java.io.DataOutputStream
 import java.nio.file.Path
 import kotlin.io.path.*
@@ -26,18 +28,13 @@ sealed class Pack(
       println(name)
       metadata()
 
-      output.writeByte(10)
-      output.writeUTF("")
-      CompoundTag(mapOf(
-        "data" to CompoundTag(mapOf(
-          "contents" to CompoundTag(mapOf(
-            "" to CompoundTag(mapOf(
-              "_" to content()
-            )),
+      output.writeData(CompoundTag(mapOf(
+        "contents" to CompoundTag(mapOf(
+          "" to CompoundTag(mapOf(
+            "_" to content()
           )),
         )),
-        "DataVersion" to IntTag.valueOf(0),
-      )).write(output)
+      )))
     }
 
     val packRoot = (datapacks / name).createDirectories()
@@ -65,6 +62,21 @@ sealed class Pack(
 
     private val json: Json = Json {
       prettyPrint = true
+    }
+
+    init {
+      DataOutputStream((data / "scoreboard.dat").outputStream().buffered()).use { output ->
+        output.writeData(CompoundTag(mapOf(
+          "Objectives" to ListTag(listOf(
+            CompoundTag(mapOf(
+              "CriteriaName" to StringTag.valueOf("dummy"),
+              "DisplayName" to StringTag.valueOf("""{"text":"_"}"""),
+              "RenderType" to StringTag.valueOf("integer"),
+              "Name" to StringTag.valueOf("_"),
+            ))
+          ), 10),
+        )))
+      }
     }
   }
 }
