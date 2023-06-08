@@ -50,7 +50,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: ${{ matrix.benchmark }}
-          path: mch-results.json
+          path: server/mch-results.json
           retention-days: 1
   merge:
     needs: bench
