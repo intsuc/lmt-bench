@@ -37,18 +37,13 @@ jobs:
           java-version: "19"
       - name: Validate gradle wrapper
         uses: gradle/wrapper-validation-action@v1
-      - name: Generate datapack
-        uses: gradle/gradle-build-action@v2
-        with:
-          arguments: |
-            run
-            --args="${{ matrix.benchmark }}"
       - name: Setup Minecraft
         uses: mcenv/setup-minecraft@v3
         with:
           version: "snapshot"
       - name: Benchmark
         run: |
+          cd server
           curl -L -o mch.jar https://github.com/mcenv/mch/releases/latest/download/mch.jar
           java -jar mch.jar --mc=$MINECRAFT --execute-benchmarks=${{ matrix.benchmark }}:baseline,${{ matrix.benchmark }}:access
       - name: Upload benchmark results
