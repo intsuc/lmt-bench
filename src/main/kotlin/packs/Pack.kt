@@ -9,10 +9,7 @@ import nbt.IntTag
 import nbt.Tag
 import java.io.DataOutputStream
 import java.nio.file.Path
-import kotlin.io.path.Path
-import kotlin.io.path.createDirectories
-import kotlin.io.path.div
-import kotlin.io.path.outputStream
+import kotlin.io.path.*
 
 sealed class Pack(
   val name: String,
@@ -47,9 +44,9 @@ sealed class Pack(
     (packRoot / "pack.mcmeta").outputStream().buffered().use { output ->
       json.encodeToStream(PackMetadata(PackMetadata.PackMetadataSection(name, 15)), output)
     }
-    val functions = packRoot / "data" / "minecraft" / "functions"
+    val functions = packRoot / "data" / name / "functions"
     pack().forEach { (name, commands) ->
-      (functions / "$name.mcfunction").outputStream().buffered().use { output ->
+      (functions / "$name.mcfunction").createParentDirectories().outputStream().buffered().use { output ->
         commands.forEach {
           output.write(it.encodeToByteArray())
           output.write('\n'.code)

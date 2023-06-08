@@ -28,12 +28,15 @@ class GenericArity(
 
   private fun create(depth: Int): Tag {
     return when (depth) {
-      0    -> ListTag(listOf(ByteTag.valueOf(0)), 0)
+      0    -> ListTag(listOf(ByteTag.valueOf(0)), 1)
       else -> ListTag(List(arity) { create(depth - 1) }, 9)
     }
   }
 
   override fun pack(): Map<String, List<String>> {
-    return mapOf()
+    return mapOf(
+      "baseline" to emptyList(),
+      "access" to listOf("data get storage $name: _${"[${-arity}]".repeat(height)}[0]"),
+    )
   }
 }

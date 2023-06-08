@@ -19,6 +19,7 @@ fun main() {
     GenericArity(14),
     GenericArity(15),
     GenericArity(16),
+    GenericArity(32),
     GenericArity(256),
     GenericArity(65536),
   ).forEach {
