@@ -45,7 +45,7 @@ jobs:
         run: |
           cd server
           curl -L -o mch.jar https://github.com/mcenv/mch/releases/latest/download/mch.jar
-          java -jar mch.jar --mc=$MINECRAFT "--jvm-args=-Xms2G -Xmx2G" --execute-benchmarks=${{ matrix.benchmark }}:baseline,${{ matrix.benchmark }}:access
+          java -jar mch.jar --mc=$MINECRAFT --execute-benchmarks=${{ matrix.benchmark }}:baseline,${{ matrix.benchmark }}:access
       - name: Upload benchmark results
         uses: actions/upload-artifact@v3
         with:
