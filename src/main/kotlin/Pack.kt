@@ -1,6 +1,7 @@
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
+import nbt.Tag
 import java.io.DataOutputStream
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -18,7 +19,7 @@ sealed class Pack(
   @OptIn(ExperimentalSerializationApi::class)
   fun generate() {
     DataOutputStream((data / "command_storage_$name.dat").outputStream().buffered()).use { output ->
-      output.writeTag(storage())
+      // storage().write(output)
     }
 
     val packRoot = (datapacks / name).createDirectories()
