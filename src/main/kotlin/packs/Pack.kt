@@ -4,6 +4,8 @@ import PackMetadata
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
+import nbt.CompoundTag
+import nbt.IntTag
 import nbt.Tag
 import java.io.DataOutputStream
 import java.nio.file.Path
@@ -17,17 +19,28 @@ sealed class Pack(
 ) {
   abstract fun metadata()
 
-  abstract fun storage(): Tag
+  abstract fun content(): Tag
 
   abstract fun pack(): Map<String, List<String>>
 
   @OptIn(ExperimentalSerializationApi::class)
   fun generate() {
     DataOutputStream((data / "command_storage_$name.dat").outputStream().buffered()).use { output ->
-      val storage = storage()
       println(name)
       metadata()
-      // storage.write(output)
+
+      output.writeByte(10)
+      output.writeUTF("")
+      CompoundTag(mapOf(
+        "data" to CompoundTag(mapOf(
+          "contents" to CompoundTag(mapOf(
+            "" to CompoundTag(mapOf(
+              "_" to content()
+            )),
+          )),
+        )),
+        "DataVersion" to IntTag.valueOf(0),
+      )).write(output)
     }
 
     val packRoot = (datapacks / name).createDirectories()

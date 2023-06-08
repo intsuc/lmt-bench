@@ -21,7 +21,7 @@ class GenericArity(
     println("   scale      $scale")
   }
 
-  override fun storage(): Tag {
+  override fun content(): Tag {
     return create(height)
   }
 
