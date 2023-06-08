@@ -1,7 +1,11 @@
+package packs
+
+import PackMetadata
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.encodeToStream
 import nbt.Tag
+import org.openjdk.jol.info.GraphLayout
 import java.io.DataOutputStream
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -12,6 +16,8 @@ import kotlin.io.path.outputStream
 sealed class Pack(
   val name: String,
 ) {
+  abstract fun metadata(totalSize: Long)
+
   abstract fun storage(): Tag
 
   abstract fun pack(): Map<String, List<String>>
@@ -19,12 +25,17 @@ sealed class Pack(
   @OptIn(ExperimentalSerializationApi::class)
   fun generate() {
     DataOutputStream((data / "command_storage_$name.dat").outputStream().buffered()).use { output ->
-      // storage().write(output)
+      val storage = storage()
+      val layout = GraphLayout.parseInstance(storage)
+      println(name)
+      metadata(layout.totalSize())
+      println(layout.toFootprint())
+      // storage.write(output)
     }
 
     val packRoot = (datapacks / name).createDirectories()
     (packRoot / "pack.mcmeta").outputStream().buffered().use { output ->
-      json.encodeToStream(PackMetadata(PackMetadata.PackMetadataSection("", 15)), output)
+      json.encodeToStream(PackMetadata(PackMetadata.PackMetadataSection(name, 15)), output)
     }
     val functions = packRoot / "data" / "minecraft" / "functions"
     pack().forEach { (name, commands) ->
@@ -38,6 +49,8 @@ sealed class Pack(
   }
 
   companion object {
+    const val MAX_SIZE: Int = 65536
+
     private val server: Path = Path("server")
     private val world: Path = server / "world"
     private val data: Path = world / "data"
