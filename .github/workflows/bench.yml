@@ -64,10 +64,10 @@ jobs:
           script: |
             const fs = require("fs");
             const results = {};
-            const globber = await glob.create("versions/*/mch-result.json");
+            const globber = await glob.create("versions/*/mch-results.json");
             const versions = await globber.glob();
             for (const version of versions) {
-              const id = version.slice(0, -"/mch-result.json".length).split("/").pop();
+              const id = version.slice(0, -"/mch-results.json".length).split("/").pop();
               results[id] = JSON.parse(fs.readFileSync(version));
             }
             fs.writeFileSync("results.json", JSON.stringify(results));
