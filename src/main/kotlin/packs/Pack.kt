@@ -30,9 +30,7 @@ sealed class Pack(
 
       output.writeData(CompoundTag(mapOf(
         "contents" to CompoundTag(mapOf(
-          "" to CompoundTag(mapOf(
-            "_" to content()
-          )),
+          "" to content(),
         )),
       )))
     }

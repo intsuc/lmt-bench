@@ -1,7 +1,8 @@
 package packs
 
 import getMaxCapacity
-import nbt.ByteTag
+import nbt.CompoundTag
+import nbt.IntTag
 import nbt.ListTag
 import nbt.Tag
 import kotlin.math.log
@@ -23,20 +24,28 @@ class GenericArity(
   }
 
   override fun content(): Tag {
-    return create(height)
+    return CompoundTag(mutableMapOf<String, Tag>().also {
+      it["_"] = create(height)
+      if (arity <= 32) {
+        for (i in 2..<arity) {
+          it[i.toString()] = ListTag(List(i) { ListTag(emptyList(), 0) }, 9)
+        }
+      }
+    })
   }
 
   private fun create(depth: Int): Tag {
-    return when (depth) {
-      0    -> ListTag(listOf(ByteTag.valueOf(0)), 1)
-      else -> ListTag(List(arity) { create(depth - 1) }, 9)
+    var index = 0
+    fun go(depth: Int): Tag {
+      return when (depth) {
+        0    -> ListTag(listOf(IntTag.valueOf(index++)), 3)
+        else -> ListTag(List(arity) { go(depth - 1) }, 9)
+      }
     }
+    return go(depth)
   }
 
   override fun pack(): Map<String, List<String>> {
-    return mapOf(
-      "baseline" to emptyList(),
-      "access" to listOf("data get storage $name: _${"[${-arity}]".repeat(height)}[0]"),
-    )
+    return emptyMap()
   }
 }

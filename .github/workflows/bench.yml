@@ -9,24 +9,9 @@ jobs:
     strategy:
       matrix:
         benchmark:
-          - "generic_arity_2"
-          - "generic_arity_3"
-          - "generic_arity_4"
-          - "generic_arity_5"
-          - "generic_arity_6"
-          - "generic_arity_7"
-          - "generic_arity_8"
-          - "generic_arity_9"
-          - "generic_arity_10"
-          - "generic_arity_11"
-          - "generic_arity_12"
-          - "generic_arity_13"
-          - "generic_arity_14"
-          - "generic_arity_15"
-          - "generic_arity_16"
-          - "generic_arity_32"
-          - "generic_arity_256"
-          - "generic_arity_65536"
+          - "generic_arity_2:touch_check"
+          - "generic_arity_2:touch_remove"
+          - "generic_arity_3:touch_remove"
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -45,7 +30,7 @@ jobs:
         run: |
           cd server
           curl -L -o mch.jar https://github.com/mcenv/mch/releases/latest/download/mch.jar
-          java -jar mch.jar --mc=$MINECRAFT --execute-benchmarks=${{ matrix.benchmark }}:baseline,${{ matrix.benchmark }}:access
+          java -jar mch.jar --mc=$MINECRAFT --execute-benchmarks=common:baseline,${{ matrix.benchmark }}
       - name: Upload benchmark results
         uses: actions/upload-artifact@v3
         with:
