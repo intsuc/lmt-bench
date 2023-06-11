@@ -24,7 +24,7 @@ jobs:
         run: |
           cd server
           curl -L -o mch.jar https://github.com/mcenv/mch/releases/latest/download/mch.jar
-          java -jar mch.jar --mc=$MINECRAFT --time-unit=ns --execute-benchmarks=generic_arity_2:touch_skip/,common:baseline,generic_arity_2:touch_check,generic_arity_2:touch_remove
+          java -jar mch.jar --mc=$MINECRAFT --time-unit=ns --execute-benchmarks=generic_arity_2:touch_skip,common:baseline,generic_arity_2:touch_check,generic_arity_2:touch_remove
       - name: Upload benchmark results
         uses: actions/upload-artifact@v3
         with:
