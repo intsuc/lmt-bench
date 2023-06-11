@@ -24,3 +24,5 @@ scoreboard players set 65536 _ 65536
 scoreboard players set #0 _ 0
 scoreboard players set #1 _ 0
 scoreboard players set #2 _ 0
+scoreboard players set #3 _ 0
+scoreboard players set #4 _ 0
