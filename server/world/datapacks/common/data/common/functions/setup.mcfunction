@@ -16,13 +16,14 @@ scoreboard players set 13 _ 13
 scoreboard players set 14 _ 14
 scoreboard players set 15 _ 15
 scoreboard players set 16 _ 16
+scoreboard players set 31 _ 31
 scoreboard players set 32 _ 32
 scoreboard players set 256 _ 256
 scoreboard players set 4096 _ 4096
 scoreboard players set 65536 _ 65536
 
 scoreboard players set #0 _ 0
-scoreboard players set #1 _ 0
+scoreboard players set #1 _ 31
 scoreboard players set #2 _ 0
 scoreboard players set #3 _ 0
 scoreboard players set #4 _ 0

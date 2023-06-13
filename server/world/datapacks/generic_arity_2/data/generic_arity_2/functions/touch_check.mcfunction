@@ -1,4 +1,4 @@
-scoreboard players add #1 _ 1
+scoreboard players operation #1 _ *= 31 _
 scoreboard players operation #0 _ = #1 _
 scoreboard players operation #2 _ = #1 _
 
